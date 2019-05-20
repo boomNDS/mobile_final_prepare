@@ -30,11 +30,12 @@ samples, guidance on mobile development, and a full API reference.
 - [link](https://pub.dev/)
 
 ###### :pencil2: flutter_assignment_01 
-- [git](https://github.com/Frong-nt/flutter_assignment)
+- [flutter_assignment_01](https://github.com/Frong-nt/flutter_assignment)
+- [flutter_assignment_02](https://github.com/Frong-nt/flutter_assignment_02)
+- [flutter_assignment_03](https://github.com/Frong-nt/flutter_assignment_03)
+- [https://github.com/prapawity/Mobile_Project](https://github.com/prapawity/Mobile_Project)
 
-###### :sleepy: flutter_assignment_02
-- [git](https://github.com/Frong-nt/flutter_assignment_02)
+###### :art:Theam
+- [link](https://flutterbyexample.com/flutter-theme-class/)
 
-###### :banana: flutter_assignment_03
-- [git](https://github.com/Frong-nt/flutter_assignment_03)
 

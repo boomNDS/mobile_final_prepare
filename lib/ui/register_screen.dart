@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-
+import 'package:mobile_final/model/user_model.dart';
+import '../db/db.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 class RegisterScreen extends StatefulWidget {
   @override
   MyRegist createState() {
@@ -10,6 +12,7 @@ class RegisterScreen extends StatefulWidget {
 class MyRegist extends State<RegisterScreen> {
   bool check = false;
   List<TextEditingController> textControl = [
+    new TextEditingController(),
     new TextEditingController(),
     new TextEditingController(),
     new TextEditingController()
@@ -38,10 +41,10 @@ class MyRegist extends State<RegisterScreen> {
                 Container(
                   child: TextFormField(
                     decoration: InputDecoration(
-                      hintText: "jonde@mail.com",
-                      icon: Icon(Icons.email),
+                      hintText: "User ID",
+                      prefixIcon: Icon(Icons.person),
                     ),
-                    keyboardType: TextInputType.emailAddress,
+                    keyboardType: TextInputType.text,
                     controller: textControl[0],
                     onSaved: (value) => print(value),
                     validator: (value) {
@@ -56,18 +59,53 @@ class MyRegist extends State<RegisterScreen> {
                   ),
                   margin: EdgeInsets.fromLTRB(15, 0, 15, 0),
                 ),
-                Container(
+                    Container(
                   child: TextFormField(
                     decoration: InputDecoration(
-                      hintText: "•••••••",
-                      icon: Icon(Icons.lock),
+                      hintText: "Name",
+                      prefixIcon: Icon(Icons.perm_contact_calendar),
                     ),
-                    obscureText: true,
+                    keyboardType: TextInputType.text,
                     controller: textControl[1],
                     onSaved: (value) => print(value),
                     validator: (value) {
                       if (value.isEmpty) {
-                        return "กรุณาระบุ password";
+                        return "กรุณาระบุชื่อ";
+                      } else if (value
+                              .compareTo(ListAccount.getAccount(0).name) ==
+                          0) {
+                        check = true;
+                      }else{
+                        int count =0;
+                        for(int i=0;i<value.length;i++){
+                          if(value[i] ==" "){
+                            count++;
+                          }
+                        }
+                        print(count);
+                        if(count >1 || count ==0)
+                        return "กรุณาระบุนามสกุลให้ถูกต้อง";
+                      }
+                    },
+                  ),
+                  margin: EdgeInsets.fromLTRB(15, 0, 15, 0),
+                ),
+                 Container(
+                  child: TextFormField(
+                    decoration: InputDecoration(
+                      hintText: "Age",
+                      prefixIcon: Icon(Icons.calendar_view_day),
+                    ),
+                    controller: textControl[2],
+                    onSaved: (value) => print(value),
+                    validator: (value) {
+                      if (value.isEmpty) {
+                        return "กรุณาระบุอายุ";
+
+                      }
+                      else if((int.parse(value) > 80 || int.parse(value) <10)){
+                        
+                        return "กรุณาระบุอายุให้ถูกต้อง";
                       }
                     },
                   ),
@@ -77,14 +115,16 @@ class MyRegist extends State<RegisterScreen> {
                   child: TextFormField(
                     decoration: InputDecoration(
                       hintText: "•••••••",
-                      icon: Icon(Icons.lock),
+                      prefixIcon: Icon(Icons.lock),
                     ),
                     obscureText: true,
-                    controller: textControl[2],
+                    controller: textControl[3],
                     onSaved: (value) => print(value),
                     validator: (value) {
                       if (value.isEmpty) {
                         return "กรุณาระบุ password";
+                      }else if(value.length<6){
+                        return "ความยาว password ไม่เพียงพอ";
                       }
                     },
                   ),
@@ -95,7 +135,7 @@ class MyRegist extends State<RegisterScreen> {
                     child:
                         Text("CONTINUE", style: TextStyle(color: Colors.white)),
                     color: Theme.of(context).accentColor,
-                    onPressed: () {
+                    onPressed: () async{
                       if (!_formKey.currentState.validate()) {
                         Scaffold.of(context).showSnackBar(SnackBar(
                           content: Text("กรุณาระบุข้อมูลให้ครบถ้วน"),
@@ -105,6 +145,13 @@ class MyRegist extends State<RegisterScreen> {
                           content: Text("user นี้มีอยู่ในระบบแล้ว"),
                         ));
                       } else {
+                        User user = new User(userid: textControl[0].text, name: textControl[1].text, age: int.parse(textControl[2].text),
+                        password: textControl[3].text
+                        );
+                        print(user.name);
+                        await DBProvider.db.newUser(user);
+                       
+                        Fluttertoast.showToast(msg:"User "+user.name+ " was saved", toastLength:Toast.LENGTH_SHORT);
                         Navigator.pop(context);
                       }
                       check = false;

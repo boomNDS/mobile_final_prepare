@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:mobile_final/db/db.dart';
+import 'package:mobile_final/model/user_model.dart';
 import 'register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -9,11 +12,20 @@ class LoginScreen extends StatefulWidget {
 }
 
 class Myform extends State<LoginScreen> {
-  List<bool> checkAdmin = [false, false];
   final _formKey = GlobalKey<FormState>();
+
+  List<TextEditingController> textControl = [
+    new TextEditingController(),
+    new TextEditingController(),
+  ];
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: Builder(
+    return Scaffold(
+      appBar: AppBar(
+        title:
+        Text("Login")
+      ),
+      body: Builder(
         // Create an inner BuildContext so that the onPressed methods
         // can refer to the Scaffold with Scaffold.of().
         builder: (BuildContext context) {
@@ -22,27 +34,25 @@ class Myform extends State<LoginScreen> {
         child: ListView(
           children: <Widget>[
             Container(
-              child: Image.asset(
-                "assets/cat.jpg",
+              child: Image.network(
+                "https://news.nationalgeographic.com/content/dam/news/2018/05/17/you-can-train-your-cat/02-cat-training-NationalGeographic_1484324.ngsversion.1526587209178.adapt.1900.1.jpg",
                 height: 200,
               ),
               margin: EdgeInsets.fromLTRB(50, 50, 50, 0),
             ),
             Container(
               child: TextFormField(
+                controller: textControl[0],
                 decoration: InputDecoration(
                   labelText: "User Id",
                   hintText: "User Id",
                   icon: Icon(Icons.person),
                 ),
-                keyboardType: TextInputType.emailAddress,
+                keyboardType: TextInputType.text,
                 onSaved: (value) => print(value),
                 validator: (value) {
                   if (value.isEmpty) {
                     return "กรุณาระบุ user";
-                  } else if (value.compareTo(ListAccount.getAccount(0).name) ==
-                      0) {
-                    checkAdmin[0] = true;
                   }
                 },
               ),
@@ -50,6 +60,7 @@ class Myform extends State<LoginScreen> {
             ),
             Container(
               child: TextFormField(
+                controller: textControl[1],
                 decoration: InputDecoration(
                   labelText: "Password",
                   hintText: "password",
@@ -60,11 +71,7 @@ class Myform extends State<LoginScreen> {
                 validator: (value) {
                   if (value.isEmpty) {
                     return "กรุณาระบุ password";
-                  } else if (value
-                          .compareTo(ListAccount.getAccount(0).password) ==
-                      0) {
-                    checkAdmin[1] = true;
-                  }
+                  } 
                 },
               ),
               margin: EdgeInsets.fromLTRB(15, 0, 15, 0),
@@ -72,34 +79,29 @@ class Myform extends State<LoginScreen> {
             Container(
               child: RaisedButton(
                 child: Text("LOGIN"),
-                onPressed: () {
+                onPressed: () async{
                   print(_formKey.currentState.validate());
                   if (!_formKey.currentState.validate()) {
                     Scaffold.of(context).showSnackBar(SnackBar(
                       content: Text("กรุณาระบุ user or password"),
                     ));
-                  } else if ((checkAdmin[0] == true &&
-                      checkAdmin[1] == false)) {
-                    Scaffold.of(context).showSnackBar(SnackBar(
-                      content: Text("user or password ไม่ถูกต้อง"),
-                    ));
-                  } else if ((checkAdmin[0] == false &&
-                      checkAdmin[1] == true)) {
-                    Scaffold.of(context).showSnackBar(SnackBar(
-                      content: Text("user or password ไม่ถูกต้อง"),
-                    ));
                   }
-                  else if ((checkAdmin[0] == false &&
-                      checkAdmin[1] == false)) {
-                    Scaffold.of(context).showSnackBar(SnackBar(
-                      content: Text("user or password ไม่ถูกต้อง"),
-                    ));
-                      } 
                   else {
-                    Navigator.pushNamed(context, "/Main");
+                    List<User> users = await DBProvider.db.getAllUser();
+                    bool check = false;
+                    for(int i=0;i<users.length;i++){
+                      print("userid "+users[i].userid +" == "+textControl[0].text);
+                      print("pass "+users[i].password+" == "+textControl[1].text);
+                      
+                      if(users[i].userid == textControl[0].text && users[i].password == textControl[1].text){
+                        check =true;
+                        Navigator.pushNamed(context, "/Main");
+
+                      }
+                    }
+                    if(!check) {
+                      Fluttertoast.showToast(msg:"Invalid user or password", toastLength:Toast.LENGTH_SHORT);}
                   }
-                  checkAdmin[0] = false;
-                  checkAdmin[1] = false;
                 },
               ),
               margin: EdgeInsets.fromLTRB(15, 0, 15, 0),
