@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_final/ui/friend.dart';
+import 'package:mobile_final/ui/my_friend.dart';
+import 'package:mobile_final/ui/profile.dart';
 import 'ui/login_screen.dart';
 import 'ui/register_screen.dart';
 import 'ui/home.dart';
@@ -19,7 +22,10 @@ class MyApp extends StatelessWidget {
       routes: {
         "/": (context) => LoginScreen(),
         "/regist": (context) => RegisterScreen(),
-        "/Main": (context) => MainScreen()
+        "/Main": (context) => HomeScreen(),
+        "/profile":(context)=> ProfileScreen(),
+        "/friend":(context)=>     FriendScreen(),
+       "/myfriend":(context)=> MyfriendScreen()
       },
     );
   }

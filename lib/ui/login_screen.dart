@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mobile_final/db/db.dart';
+import 'package:mobile_final/model/shared_preference.dart';
 import 'package:mobile_final/model/user_model.dart';
-import 'register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -95,6 +95,7 @@ class Myform extends State<LoginScreen> {
                       
                       if(users[i].userid == textControl[0].text && users[i].password == textControl[1].text){
                         check =true;
+                        SharePreference.setAttr(users[i]);
                         Navigator.pushNamed(context, "/Main");
 
                       }

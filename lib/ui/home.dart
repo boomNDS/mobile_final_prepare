@@ -1,103 +1,67 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_final/model/shared_preference.dart';
+import 'package:mobile_final/read_write_file/file.dart';
 
-class MainScreen extends StatefulWidget {
+class HomeScreen extends StatefulWidget {
   @override
-  MyMain createState() {
-    return new MyMain();
+  State<StatefulWidget> createState() {
+    return _Home();
   }
 }
 
-class MyMain extends State {
-  int index = 0;
+class _Home extends State<HomeScreen> {
+  String quote = "to day is my day";
+  @override
+  void initState() {
+    super.initState();
+    getText();
+  }
+
+  void getText() async {
+    quote = await FileManager.fileManager.readFile();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-        length: 5,
-        child: Scaffold(
-            appBar: AppBar(
-                title: Center(child: Text("Home")),
-                automaticallyImplyLeading: false),
-            body: TabBarView(
-              children: [
-                new Container(
-                  child: Center(
-                    child: Text(
-                      'Home',
-                      style: TextStyle(
-                        inherit: true,
-                        fontSize: 38.0,
-                      ),
-                    ),
-                  ),
-                  color: Colors.white,
-                ),
-                new Container(
-                  child: Center(
-                    child: Text('Notify',
-                        style: TextStyle(
-                          inherit: true,
-                          fontSize: 38.0,
-                        )),
-                  ),
-                  color: Colors.white,
-                ),
-                new Container(
-                  child: Center(
-                    child: Text('Map',
-                        style: TextStyle(
-                          inherit: true,
-                          fontSize: 38.0,
-                        )),
-                  ),
-                  color: Colors.white,
-                ),
-                new Container(
-                  child: Center(
-                    child: Text('Profile',
-                        style: TextStyle(
-                          inherit: true,
-                          fontSize: 38.0,
-                        )),
-                  ),
-                  color: Colors.white,
-                ),
-                new Container(
-                  child: Center(
-                    child: Text('Setup',
-                        style: TextStyle(
-                          inherit: true,
-                          fontSize: 38.0,
-                        )),
-                  ),
-                  color: Colors.white,
-                ),
-              ],
-            ),
-            bottomNavigationBar: GestureDetector(
-                onTap: () {
-                  setState(() {});
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Home"),
+      ),
+      body: Center(
+        child: Container(
+          child: Column(
+            children: <Widget>[
+              Container(
+                child: Text(
+                    "Hello " + SharePreference.name == null
+                        ? "FIRSTNAME LASTNAME"
+                        : SharePreference.name,
+                    style: DefaultTextStyle.of(context)
+                        .style
+                        .apply(fontSizeFactor: 0.5)),
+              ),
+              Text("this is my quote " + '\"$quote\"'),
+              RaisedButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, "/profile");
                 },
-                child: new Material(
-                  child: TabBar(
-                    tabs: <Widget>[
-                      Tab(
-                        icon: Icon(Icons.view_compact),
-                      ),
-                      Tab(
-                        icon: Icon(Icons.notifications),
-                      ),
-                      Tab(
-                        icon: Icon(Icons.explore),
-                      ),
-                      Tab(
-                        icon: Icon(Icons.person),
-                      ),
-                      Tab(
-                        icon: Icon(Icons.settings),
-                      )
-                    ],
-                  ),
-                  color: Colors.blue,
-                ))));
+                child: Text("Profile Setup"),
+              ),
+              RaisedButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, "/friend");
+                  },
+                  child: Text("My Friend")),
+              RaisedButton(
+                  onPressed: () {
+                    SharePreference.clear();
+                    Navigator.pop(context);
+                  },
+                  child: Text("Sign Out"))
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
